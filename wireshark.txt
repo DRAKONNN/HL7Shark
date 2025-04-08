@@ -12,3 +12,5 @@ $ tshark -i lo -Y "tcp.port == 5000 && hl7" -O hl7 -V # disector HL7
 $ tshark -i lo -d tcp.port==5000,hl7 -f "tcp port 5000" -V # todos los frames
 $ tshark -i lo -d tcp.port==5000,hl7 -f "tcp port 5000" -Y 'hl7 contains "ADT^A01^ADT_A01" && hl7
  contains "PID" && hl7 contains "NK1"' -O hl7 -V # definitivo
+$ tshark -i ens18 -d tcp.port==5000,hl7 -f "tcp port 5000" -Y 'hl7 contains "ADT^A01^ADT_A01" && hl7 contains "PID" &&
+ hl7 contains "NK1"' -O hl7 -V # sin loopback
