@@ -18,6 +18,16 @@ db_config = {
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def format_name(name: str) -> str:
+    """Capitaliza un nombre correctamente (ej: 'REED' -> 'Reed')"""
+    return name.capitalize() if name else ''
+
+def format_address_component(component: str) -> str:
+    """Formatea componentes de dirección capitalizando correctamente (ej: 'ANN ARBOR' -> 'Ann Arbor')"""
+    if not component:
+        return ''
+    return ' '.join(word.capitalize() for word in component.split())
+
 def parse_hl7_message(hl7_message: str) -> dict:
     """Versión robusta con todos los campos requeridos"""
     try:
@@ -36,26 +46,46 @@ def parse_hl7_message(hl7_message: str) -> dict:
         raw_pid = get_hl7_value(msg.pid.pid_2, 0, '0')
         numeric_pid = int(''.join(filter(str.isdigit, raw_pid))) if raw_pid else 0
 
-        # Dirección (PID-11)
+        # Procesamiento de nombres (PID-5)
+        pid5 = msg.pid.pid_5 if msg.pid.pid_5 else None
+        if pid5:
+            full_name = pid5.value if pid5 else ''
+            name_parts = full_name.split('^')
+            
+            lname = format_name(name_parts[0]) if len(name_parts) > 0 else ''
+            fname = format_name(name_parts[1]) if len(name_parts) > 1 else ''
+            mname = format_name(name_parts[2]) if len(name_parts) > 2 else ''
+        else:
+            lname, fname, mname = '', '', ''
+
+        # Procesamiento de dirección (PID-11) - Ejemplo: "2222 HOME STREET^^ANN ARBOR^MI^12345^USA"
         pid11 = msg.pid.pid_11 if msg.pid.pid_11 else None
-        address_components = {
-            'street': get_hl7_value(pid11, 1) if pid11 else '',
-            'city': get_hl7_value(pid11, 3) if pid11 else '',
-            'state': get_hl7_value(pid11, 4) if pid11 else '',
-            'postal_code': get_hl7_value(pid11, 5) if pid11 else ''
-        }
+        if pid11:
+            full_address = pid11.value if pid11 else ''
+            address_parts = full_address.split('^')
+            
+            street = format_address_component(address_parts[0]) if len(address_parts) > 0 else ''
+            city = format_address_component(address_parts[2]) if len(address_parts) > 2 else ''
+            state = address_parts[3].upper() if len(address_parts) > 3 else ''  # Estados en mayúsculas
+            postal_code = address_parts[4] if len(address_parts) > 4 else ''
+            country = format_address_component(address_parts[5]) if len(address_parts) > 5 else 'US'
+        else:
+            street, city, state, postal_code, country = '', '', '', '', 'US'
 
         return {
             'pid': numeric_pid,
             'title': 'Mr.',  # Valor por defecto
             'language': 'english',
             'financial': '1',
-            'fname': get_hl7_value(msg.pid.pid_5, 2) if msg.pid.pid_5 else '',
-            'lname': get_hl7_value(msg.pid.pid_5, 1) if msg.pid.pid_5 else '',
-            'mname': get_hl7_value(msg.pid.pid_5, 3) if msg.pid.pid_5 else '',
+            'fname': fname,
+            'lname': lname,
+            'mname': mname,
             'DOB': datetime.strptime(get_hl7_value(msg.pid.pid_7), '%Y%m%d').date() if get_hl7_value(msg.pid.pid_7) else None,
-            **address_components,  # Desempaqueta los componentes de dirección
-            'country_code': 'US',
+            'street': street,
+            'city': city,
+            'state': state,
+            'postal_code': postal_code,
+            'country_code': country,
             'drivers_license': '',
             'ss': get_hl7_value(msg.pid.pid_19),
             'phone_home': re.sub(r'[^\d+]', '', get_hl7_value(msg.pid.pid_13, 1)),
@@ -83,7 +113,7 @@ def insert_openemr_patient(data: dict) -> int:
     try:
         # Aseguramos que todos los campos requeridos existan
         required_fields = [
-            'street', 'city', 'state', 'postal_code',
+            'street', 'city', 'state', 'postal_code', 'country_code',
             'phone_home', 'phone_biz', 'phone_cell'
         ]
         
@@ -94,12 +124,12 @@ def insert_openemr_patient(data: dict) -> int:
         cursor = conn.cursor()
 
         query = """
-        INSERT INTO `patient_data` (
-            `pid`, `title`, `language`, `financial`, `fname`, `lname`, `mname`, `DOB`,
-            `street`, `postal_code`, `city`, `state`, `country_code`,
-            `drivers_license`, `ss`, `phone_home`, `phone_biz`, `phone_cell`,
-            `status`, `sex`, `email`, `race`, `ethnicity`, `pubpid`,
-            `hipaa_mail`, `hipaa_voice`, `regdate`
+        INSERT INTO patient_data (
+            pid, title, language, financial, fname, lname, mname, DOB,
+            street, postal_code, city, state, country_code,
+            drivers_license, ss, phone_home, phone_biz, phone_cell,
+            status, sex, email, race, ethnicity, pubpid,
+            hipaa_mail, hipaa_voice, regdate
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s, %s,
             %s, %s, %s, %s, %s,

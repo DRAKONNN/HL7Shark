@@ -23,14 +23,13 @@ def build_hl7_message():
 
     # PID Segment (Patient Identification)
     pid = msg.add_segment("PID")
-    pid.pid_1 = "1"
-    pid.pid_2 = "123456789^^^HOSP^MR"
+    pid.pid_1 = "7"
+    pid.pid_2 = "307^^^HOSP^MR"
     pid.pid_5 = "RICHARDS^REED^NATHANIEL"
     pid.pid_7 = "19800101"
     pid.pid_8 = "M"
-    pid.pid_11 = "42 STREET AND MADISON AVENUE^^NEW YORK^NY^10017^USA"
-    pid.pid_11 = "2222 HOME STREET^^ANN ARBOR^MI^12345^USA"
-    pid.pid_13 = "555-555-2004~444-333-222"
+    pid.pid_11 = "42 FANSTASTIC FOUR BLVD^^NEW YORK^NY^10017^USA"
+    pid.pid_13 = "212-555-1961"
     pid.pid_16 = "M"
 
     # NK1 Segment (Next of Kin)
