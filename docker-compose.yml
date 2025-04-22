@@ -1,0 +1,42 @@
+version: '3.1'
+services:
+  mysql:
+    restart: always
+    image: mariadb:10.4
+    ports:
+      - 3306:3306
+    command: ['mysqld','--character-set-server=utf8']
+    volumes:
+      - databasevolume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8083:80
+    environment:
+      PMA_HOSTS: mysql
+    deploy:
+      replicas: 1
+  openemr:
+    restart: always
+    image: openemr/openemr:5.0.2
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - logvolume01:/var/log
+      - sitevolume:/var/www/localhost/htdocs/openemr/sites
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASS: root
+      MYSQL_USER: openemr
+      MYSQL_PASS: openemr
+      OE_USER: admin
+      OE_PASS: pass
+    depends_on:
+      - mysql
+volumes:
+  logvolume01: {}
+  sitevolume: {}
+  databasevolume: {}

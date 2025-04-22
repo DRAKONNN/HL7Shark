@@ -14,3 +14,13 @@ $ tshark -i lo -d tcp.port==5000,hl7 -f "tcp port 5000" -Y 'hl7 contains "ADT^A0
  contains "PID" && hl7 contains "NK1"' -O hl7 -V # definitivo
 $ tshark -i ens18 -d tcp.port==5000,hl7 -f "tcp port 5000" -Y 'hl7 contains "ADT^A01^ADT_A01" && hl7 contains "PID" &&
  hl7 contains "NK1"' -O hl7 -V # sin loopback
+
+'''
+message = (
+    "MSH|^~\&|NYC_Health_ADT||||20080115153000||ADT^A01^ADT_A01|0123456789|P|2.5||||AL"
+    "EVN||20080115153000||AAA|AAA|20080114003000"
+    "PID|1|123456789^^^HOSP^MR|||RICHARDS^REED^NATHANIEL||19800101|M|||2222 HOME STREET^^ANN ARBOR^MI^12345^USA||555-555-2004\R\444-333-222|||M"
+    "NK1|1|RICHARDS^SUE^STORM|SPO|2222 HOME STREET^^ANN ARBOR^MI^^USA"
+    "PV1|1|I|ICU^123^B^1||||12345^Smith^Anna^MD"
+)
+'''
