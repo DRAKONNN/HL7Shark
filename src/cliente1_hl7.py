@@ -8,28 +8,43 @@ def build_hl7_message():
     msg = Message("ADT_A01", version="2.5")
     
     # MSH Segment (Header)
-    msg.msh.msh_1 = "|"
-    msg.msh.msh_2 = "^~\\&"
-    msg.msh.msh_3 = "HL7_SOURCE"
-    msg.msh.msh_4 = "FACILITY"
-    msg.msh.msh_5 = "OPENEMR"
-    msg.msh.msh_6 = "CLINIC"
-    msg.msh.msh_7 = datetime.now().strftime('%Y%m%d%H%M%S')
-    msg.msh.msh_9 = "ADT^A01"
-    msg.msh.msh_10 = "MSG456"
+    msg.msh.msh_3 = 'NYC_Health_ADT' # Good Health Hospital ADT
+    msg.msh.msh_7 = '20080115153000'
+    msg.msh.msh_9 = 'ADT^A01^ADT_A01'
+    msg.msh.msh_10 = "0123456789"
     msg.msh.msh_11 = "P"
-    msg.msh.msh_12 = "2.5"
-    
+    msg.msh.msh_16 = "AL"
+        
+    # EVN Segment (Event)
+    msg.evn.evn_2 = msg.msh.msh_7
+    msg.evn.evn_4 = "AAA"
+    msg.evn.evn_5 = msg.evn.evn_4
+    msg.evn.evn_6 = '20080114003000'
+
     # PID Segment (Patient Identification)
     pid = msg.add_segment("PID")
     pid.pid_1 = "1"
-    pid.pid_2 = "PAT789^^^HOSP^MR"
-    pid.pid_5 = "SMITH^JANE^MARIE"
-    pid.pid_7 = "19851021"
-    pid.pid_8 = "F"
-    pid.pid_11 = "123 MAIN ST^^BOSTON^MA^02115"
-    pid.pid_13 = "(617)555-1234"
-    pid.pid_19 = "456-78-9012"
+    pid.pid_2 = "123456789^^^HOSP^MR"
+    pid.pid_5 = "RICHARDS^REED^NATHANIEL"
+    pid.pid_7 = "19800101"
+    pid.pid_8 = "M"
+    pid.pid_11 = "42 STREET AND MADISON AVENUE^^NEW YORK^NY^10017^USA"
+    pid.pid_11 = "2222 HOME STREET^^ANN ARBOR^MI^12345^USA"
+    pid.pid_13 = "555-555-2004~444-333-222"
+    pid.pid_16 = "M"
+
+    # NK1 Segment (Next of Kin)
+    msg.nk1.nk1_1 = '1'
+    msg.nk1.nk1_2 = 'RICHARDS^SUE^STORM'
+    msg.nk1.nk1_3 = 'SPO'
+    msg.nk1.nk1_4 = '2222 HOME STREET^^ANN ARBOR^MI^^USA'
+
+    # PV1 Segment (Patient Visit)
+    pv1 = msg.add_segment("PV1")
+    pv1.pv1_1 = "1"
+    pv1.pv1_2 = "I"
+    pv1.pv1_3 = "ICU^123^B^1"
+    pv1.pv1_7 = "12345^Smith^Anna^MD^^^"
 
     return msg
 
@@ -37,12 +52,12 @@ def send_hl7_message(host, port):
     """Envía el mensaje HL7 como HTTP POST"""
     msg = build_hl7_message()
     
-    # Convertir a formato ER7 y asegurar el formato correcto
+    # Convertir a formato ER7 sin modificar separadores
     hl7_str = msg.to_er7()
-    hl7_str = hl7_str.replace('\n', '\r').replace('\\&', '\\\&')
     
     # Construir URL
-    url = urljoin(f"http://{host}:{port}/", "api/hl7")
+    # Ejecutar "python -m pip install --upgrade urllib3" si da error "Failed to parse: <url>"
+    url = urljoin(f"http://{host}:{port}/", "api/hl7") 
     
     headers = {
         'Content-Type': 'text/plain',

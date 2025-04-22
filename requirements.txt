@@ -6,3 +6,4 @@ flasgger
 mysql-connector-python
 requests
 php
+urllib3
