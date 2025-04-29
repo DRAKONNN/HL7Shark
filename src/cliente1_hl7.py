@@ -23,12 +23,12 @@ def build_hl7_message():
 
     # PID Segment (Patient Identification)
     pid = msg.add_segment("PID")
-    pid.pid_1 = "7"
-    pid.pid_2 = "307^^^HOSP^MR"
+    pid.pid_1 = "12"
+    pid.pid_2 = "312^^^HOSP^MR"
     pid.pid_5 = "RICHARDS^REED^NATHANIEL"
     pid.pid_7 = "19800101"
     pid.pid_8 = "M"
-    pid.pid_11 = "42 FANSTASTIC FOUR BLVD^^NEW YORK^NY^10017^USA"
+    pid.pid_11 = "42 FANSTASTIC FOUR BLVD^^NEW YORK^NY^10017^US"
     pid.pid_13 = "212-555-1961"
     pid.pid_16 = "M"
 
@@ -36,7 +36,7 @@ def build_hl7_message():
     msg.nk1.nk1_1 = '1'
     msg.nk1.nk1_2 = 'RICHARDS^SUE^STORM'
     msg.nk1.nk1_3 = 'SPO'
-    msg.nk1.nk1_4 = '2222 HOME STREET^^ANN ARBOR^MI^^USA'
+    msg.nk1.nk1_4 = '2222 HOME STREET^^ANN ARBOR^MI^^US'
 
     # PV1 Segment (Patient Visit)
     pv1 = msg.add_segment("PV1")
