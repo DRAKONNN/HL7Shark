@@ -51,11 +51,11 @@ def send_hl7_message(host, port):
     """Envía el mensaje HL7 como HTTP POST"""
     msg = build_hl7_message()
     
-    # Convertir a formato ER7 sin modificar separadores
+    # Convert to ER7 format without modifying separators
     hl7_str = msg.to_er7()
     
-    # Construir URL
-    # Ejecutar "python -m pip install --upgrade urllib3" si da error "Failed to parse: <url>"
+    # URL build
+    # EXECUTE "python -m pip install --upgrade urllib3" IF THERE IS "Failed to parse: <url>" ERROR
     url = urljoin(f"http://{host}:{port}/", "api/hl7") 
     
     headers = {
