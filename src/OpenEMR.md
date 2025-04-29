@@ -1,4 +1,4 @@
-HL7
+OpenEMR
 ==============
 **HL7** is a set of international standards created to facilitate the electronic exchange of clinical information between healthcare information systems. It is based on plain text divided into segments containing patient data.
 Many systems send it via **MLLP**, so traffic can be spied on with analyzers like **Wireshark**.
