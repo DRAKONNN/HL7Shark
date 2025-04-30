@@ -1,0 +1,9 @@
+# INSTALLATION
+$ sudo apt update && sudo apt install -y tshark
+$ sudo usermod -aG wireshark $USER
+$ newgrp wireshark
+$ tshark --version
+$ ip a (ls /sys/class/net/)
+
+# COMMANDS
+$ tshark -i lo -f "tcp port 5000" -Y 'tcp contains "ADT^A01^ADT_A01" and tcp contains "PID" and tcp contains "NK1"' -V # filtered traffic with loopback

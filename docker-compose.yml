@@ -20,7 +20,7 @@ services:
       replicas: 1
   openemr:
     restart: always
-    image: openemr/openemr:5.0.2
+    image: openemr/openemr:latest
     ports:
       - 80:80
       - 443:443

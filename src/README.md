@@ -24,3 +24,12 @@ This is the workflow that will be performed on the endpoint:
 >   - The information is formatted (names, address, gender, etc.).
 >   - The data is inserted into the `patient_data` table in the MySQL database.
 >   - An HL7 ACK (Acknowledgment) message is returned to the client.
+
+## 🦈Wireshark
+We can intercept the HL7 message between `client_hl7.py` and `api_hl7.py` with the following command in loopback.
+```
+$ tshark -i lo -f "tcp port 5000" -Y 'tcp contains "ADT^A01^ADT_A01" and tcp contains "PID" and tcp contains "NK1"' -V
+```
+
+---
+*Created and documented by [DRAKONNN](https://github.com/DRAKONNN)*

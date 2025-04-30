@@ -23,8 +23,8 @@ def build_hl7_message():
 
     # PID Segment (Patient Identification)
     pid = msg.add_segment("PID")
-    pid.pid_1 = "13"
-    pid.pid_2 = "313^^^HOSP^MR"
+    pid.pid_1 = "21"
+    pid.pid_2 = "321^^^HOSP^MR"
     pid.pid_5 = "RICHARDS^REED^NATHANIEL"
     pid.pid_7 = "19800101"
     pid.pid_8 = "M"

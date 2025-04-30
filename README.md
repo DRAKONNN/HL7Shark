@@ -28,5 +28,19 @@ $ tshark -i lo -d tcp.port==5000,hl7 -f "tcp port 5000" -Y 'hl7 contains "ADT^A0
  contains "PID" && hl7 contains "NK1"' -O hl7 -V
 ```
 
+## 📦Docker compose
+To run the `docker-compose.yml` and use **OpenEMR** and **MySQL** database, you have to install the docker images first:
+```
+$ docker --version
+$ docker pull openemr/openemr:latest
+$ docker pull mariadb:10.4
+$ docker pull phpmyadmin/phpMyAdmin
+```
+Once we have the images, we can raise the containers:
+```
+$ docker images
+$ docker compose -f docker-compose.yml up -d
+```
+
 ---
-*Creado y documentado por [DRAKONNN](https://github.com/DRAKONNN)*
+*Created and documented by [DRAKONNN](https://github.com/DRAKONNN)*
