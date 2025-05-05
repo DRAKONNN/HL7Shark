@@ -78,6 +78,6 @@ def send_hl7_message(host, port):
         print("ACK received:\n", ack_clean)
 
 if __name__ == "__main__":
-    HOST = "192.168.1.98"
+    HOST = "192.168.1.98" # CHANGE URL WITH YOUR SERVER
     PORT = 5000
     send_hl7_message(HOST, PORT)
