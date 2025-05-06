@@ -42,5 +42,37 @@ $ docker images
 $ docker compose -f docker-compose.yml up -d
 ```
 
+Wait **5 minutes** for it to load and ensure that **OpenEMR** has loaded correctly:
+```
+$ docker ps
+$ docker logs <id-openemr> -f
+```
+
+> Generating a RSA private key  
+> .................................................++++  
+> ......................................................................................................++++  
+> writing new private key to '/etc/ssl/private/selfsigned.key.pem'  
+> ...  
+> Setting user 'www' as owner of openemr/ and setting file/dir permissions to 400/500  
+> Default file permissions and ownership set, allowing writing to specific directories  
+> Removing remaining setup scripts  
+> Setup scripts removed, we should be ready to go now!  
+>  
+> Love OpenEMR? You can now support the project via the open collective:  
+> ...
+>  
+> Starting cron daemon!  
+> Starting apache!
+
+---
+These are the links and credentials for the services:
+
+| Service    | Links                | Credentials     |
+|------------|----------------------|-----------------|
+| OpenEMR    | http://HOST-IP:80/   | admin:pass      |
+| phpMyAdmin | http://HOST-IP:8083/ | openemr:openemr |
+
+> ⚠️Note: Ports may vary depending on what is set in `docker-compose.yml`.
+
 ---
 *Created and documented by [DRAKONNN](https://github.com/DRAKONNN)*

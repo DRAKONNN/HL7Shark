@@ -1,0 +1,16 @@
+# INSTALLATION
+$ sudo apt update && sudo apt install -y tshark
+$ sudo usermod -aG wireshark $USER
+$ newgrp wireshark
+$ tshark --version
+$ ip a (ls /sys/class/net/)
+
+# COMMANDS
+$ tshark -i lo -f "tcp port 5000" -Y 'http.request.method == POST && http.content_type contains "application/fhir+json"' -T fields -e frame.time -e ip.src -e ip.dst -e http.request.uri -e http.request.method -e http.file_data
+
+# EXPLANATION
+-i lo: Captures on the loopback interface.
+-f "tcp port 5000": Filters for TCP traffic on port 5000 (based on your FHIR server URL).
+-Y 'http.request.method == POST && http.content_type contains "application/fhir+json"': Display filter for HTTP POST requests with the FHIR JSON content type.
+-T fields: Outputs specific fields for clarity.
+-e frame.time -e ip.src -e ip.dst -e http.request.uri -e http.request.method -e http.file_data: Extracts timestamp, source/destination IPs, request URI, method, and the HTTP payload (FHIR JSON data).

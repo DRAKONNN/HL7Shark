@@ -42,10 +42,10 @@ def insert_openemr_patient(data: Dict[str, Any]) -> int:
     conn = None
     cursor = None
     try:
-        # Asegurar que el PID sea único y no sea 0
+        # Autoincremented PID
         data['pid'] = get_next_pid()
 
-        # Asegurar campos mínimos
+        # Ensure minimum fields
         required_fields = [
             'street', 'city', 'state', 'postal_code', 'country_code',
             'phone_home', 'phone_biz', 'phone_cell'
@@ -103,7 +103,7 @@ def insert_openemr_patient(data: Dict[str, Any]) -> int:
 
         cursor.execute(query, values)
         conn.commit()
-        return data['pid']  # Devolver el PID usado
+        return data['pid'] # Autoincremented PID
 
     except mysql.connector.Error as err:
         logger.error(f"Error MySQL: {err}", exc_info=True)
@@ -118,7 +118,7 @@ def insert_openemr_patient(data: Dict[str, Any]) -> int:
             conn.close()
 
 def process_fhir_patient(patient_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Convierte datos FHIR Patient a formato OpenEMR"""
+    """Converts FHIR Patient data to OpenEMR format"""
     return {
         'pid': int(patient_data.get('id', 0)),
         'title': 'Mr.' if patient_data.get('gender', '').lower() == 'male' else 'Ms.',
@@ -158,7 +158,7 @@ async def handle_fhir_json(request: Request):
         json_data = await request.json()
         logger.info(f"FHIR JSON recibido: {json_data}")
 
-        # Verificar si es un Bundle
+        # Check if it is a Bundle
         if json_data.get('resourceType') == 'Bundle':
             results = []
             for entry in json_data.get('entry', []):
@@ -176,16 +176,16 @@ async def handle_fhir_json(request: Request):
         elif json_data.get('resourceType') == 'Patient':
             patient = process_fhir_patient(json_data)
             new_pid = insert_openemr_patient(patient)
-            return {"message": "Paciente registrado exitosamente", "pid": new_pid}
+            return {"message": "Patient successfully registered", "pid": new_pid}
         
         else:
-            raise HTTPException(status_code=400, detail="Solo se aceptan recursos Patient o Bundles FHIR")
+            raise HTTPException(status_code=400, detail="Only Patient or FHIR Bundles resources are accepted.")
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Error: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 if __name__ == '__main__':
     import uvicorn

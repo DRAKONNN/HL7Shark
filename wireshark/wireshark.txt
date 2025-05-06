@@ -1,0 +1,14 @@
+# INSTALLATION
+ $ sudo apt update && sudo apt install -y tshark
+ $ sudo usermod -aG wireshark $USER
+ $ newgrp wireshark
+ $ tshark --version
+ $ ip a (ls /sys/class/net/)
+ 
+ # COMMANDS
+ $ tshark -i ens18 -f "tcp port 5000" -V # trafico en tiempo real
+ $ tshark -i lo -Y 'tcp.port == 5000 && frame contains "MSH|"' -V # filtrando solo por "MSH" en loopback
+ $ tshark -i lo -Y "tcp.port == 5000 && hl7" -O hl7 -V # disector HL7
+ $ tshark -i lo -d tcp.port==5000,hl7 -f "tcp port 5000" -V # todos los frames
+ $ tshark -i lo -d tcp.port==5000,hl7 -f "tcp port 5000" -Y 'hl7 contains "ADT^A01^ADT_A01" && hl7
+  contains "PID" && hl7 contains "NK1"' -O hl7 -V # definitivo
