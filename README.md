@@ -3,6 +3,18 @@ HL7
 **HL7** is a set of international standards created to facilitate the electronic exchange of clinical information between healthcare information systems. It is based on plain text divided into segments containing patient data.
 Many systems send it via **MLLP**, so traffic can be spied on with analyzers like **Wireshark**.
 
+The message is encoded and divided into ***segments*** (`MSH`, `EVN`, `PID`, `NK1`...) that indicate the type of data that follows. Each ***segment*** has several ***pipes*** (`|`) that serve as separators between data and `^` to separate words.
+
+This is an example of a complete HL7 message:
+> 
+    "MSH|^~\&|NYC_Health_ADT||||20080115153000||ADT^A01^ADT_A01|0123456789|P|2.5||||AL"
+    "EVN||20080115153000||AAA|AAA|20080114003000"
+    "PID|1|123456789^^^HOSP^MR|||RICHARDS^REED^NATHANIEL||19800101|M|||2222 HOME STREET^^ANN ARBOR^MI^12345^USA||555-555-2004\R\444-333-222|||M"
+    "NK1|1|RICHARDS^SUE^STORM|SPO|2222 HOME STREET^^ANN ARBOR^MI^^USA"
+    "PV1|1|I|ICU^123^B^1||||12345^Smith^Anna^MD"
+>
+
+
 ## 🦈Wireshark
 We can intercept the HL7 message between a `client.py` and `server.py` with the following commands.
 First of all, we have to install wireshark in our Linux terminal:

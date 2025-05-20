@@ -2,7 +2,7 @@ HL7 FHIR
 ==============
 **HL7 FHIR** (Fast Healthcare Interoperability Resources) is a standard for exchanging healthcare information electronically. It's developed by **HL7** (Health Level Seven International) and is designed to make it easier for healthcare systems to share data. HL7 FHIR Combines the best features of previous HL7 standards (like HL7 v2, v3, and CDA) with modern web technologies like RESTful APIs, JSON, and XML.
 
-## 🏥Example use cases
+### Example use cases
 - A mobile app retrieving a patient’s allergies via a FHIR API.
 - A hospital system sending lab results to a specialist’s system.
 - Public health organizations aggregating COVID-19 test data from multiple sources.

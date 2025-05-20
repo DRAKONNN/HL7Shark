@@ -3,7 +3,7 @@ hl7apy
 hexdump
 flask 
 flasgger
-mysql-connector-python
+mysql-connector-python==8.0.33
 requests
 php
 urllib3
