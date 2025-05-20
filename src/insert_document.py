@@ -12,7 +12,7 @@ DB_CONFIG = {
 }
 
 # === PARÁMETROS ===
-pid = 1004  # ID del paciente
+pid = 1002  # ID del paciente
 image_path = "../public/images/Chill_Ghibli.jpg"  # Ruta local al archivo
 category_id = 2  # ID de la categoría (usa SQL para buscarla si no la sabes)
 upload_dir = "sites/default/documents/1004"  # Ruta donde se almacenan archivos
@@ -38,15 +38,23 @@ def insert_document():
     with open(document_file_path, "wb") as f:
         f.write(file_data)
 
-    # Insertar en tabla 'documents'
+    # Conectar a la base de datos
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
 
+    # Obtener el último ID usado
+    cursor.execute("SELECT MAX(id) FROM documents")
+    result = cursor.fetchone()
+    last_id = result[0] if result[0] is not None else 0
+    new_id = last_id + 1
+
+    # Insertar en tabla 'documents'
     insert_doc_sql = """
-    INSERT INTO documents (date, url, mimetype, size, name, foreign_id, docdate, owner)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO documents (id, date, url, mimetype, size, name, foreign_id, docdate, owner)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     cursor.execute(insert_doc_sql, (
+        new_id,
         now,
         relative_path,
         mime_type,
@@ -57,20 +65,18 @@ def insert_document():
         1  # owner (id del usuario que sube el archivo, puede ser 1)
     ))
 
-    document_id = cursor.lastrowid
-
     # Insertar en tabla 'categories_to_documents'
     insert_ctd_sql = """
     INSERT INTO categories_to_documents (category_id, document_id)
     VALUES (%s, %s)
     """
-    cursor.execute(insert_ctd_sql, (category_id, document_id))
+    cursor.execute(insert_ctd_sql, (category_id, new_id))
 
     conn.commit()
     cursor.close()
     conn.close()
 
-    print(f"Documento insertado con ID {document_id} y categoría {category_id}")
+    print(f"Documento insertado con ID {new_id} y categoría {category_id}")
 
 # === EJECUCIÓN ===
 if __name__ == "__main__":
